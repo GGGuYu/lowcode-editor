@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { useComponentsStore } from "../stores/components";
+import { getComponentById, useComponentsStore } from "../stores/components";
 import { createPortal } from "react-dom";
-import { Popconfirm, Space } from "antd";
+import { Dropdown, Popconfirm, Space } from "antd";
 import { DeleteOutlined } from '@ant-design/icons';
 
 //选择框的Mask
@@ -24,7 +24,7 @@ export function SelectedMask({ containerClassName , componentId , portalWrapperC
     })
 
     //接下来就是主要围绕着如何计算这些数据
-    const { curComponentId , deleteComponent , setCurComponentId ,curComponent} = useComponentsStore();
+    const {components , curComponentId , deleteComponent , setCurComponentId ,curComponent} = useComponentsStore();
 
     useEffect(() => {
         updatePosition();
@@ -68,6 +68,19 @@ export function SelectedMask({ containerClassName , componentId , portalWrapperC
         deleteComponent(componentId);
         setCurComponentId(null);
     }
+    
+    //给一个编辑框一个选项，可以展示父组件有哪些，然后可以点一下选中
+    const parentComponents = useMemo(() => {
+        const parentComponents = [];
+        
+        let component = curComponent;
+        while(component?.parentId) {
+            //获取当前父母，装进去，然后继续找父母的父母
+            component = getComponentById(component.parentId , components)!;
+            parentComponents.push(component);
+        }
+        return parentComponents;
+    } , [curComponent , components])
 
     return createPortal((<>
         {/* 框框 */}
@@ -100,19 +113,33 @@ export function SelectedMask({ containerClassName , componentId , portalWrapperC
         >
             {/* 水平布局 */}
             <Space>
-                {/* 组件名称 */}
-                <div
-                style={{
-                    padding: '0 8px',
-                    backgroundColor: 'blue',
-                    borderRadius: 4,
-                    color: '#fff',
-                    cursor: "pointer",
-                    whiteSpace: 'nowrap',
+                {/* 下拉显示父母有哪些 */}
+                <Dropdown 
+                menu={{
+                    items:parentComponents.map(item => ({
+                        key:item.id,
+                        label:item.name,
+                    })),
+                    onClick:({key}) => {
+                        setCurComponentId(+key);
+                    }
                 }}
+                disabled={parentComponents.length === 0}
                 >
-                {curComponent?.name}
-                </div>
+                    {/* 组件名称 */}
+                    <div
+                    style={{
+                        padding: '0 8px',
+                        backgroundColor: 'blue',
+                        borderRadius: 4,
+                        color: '#fff',
+                        cursor: "pointer",
+                        whiteSpace: 'nowrap',
+                    }}
+                    >
+                    {curComponent?.name}
+                    </div>
+                </Dropdown>
                 {/* 按钮和下拉框 */}
                 {curComponentId !== 1 && (
                 <div style={{ padding: '0 8px', backgroundColor: 'blue' }}>
