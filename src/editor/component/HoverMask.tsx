@@ -25,6 +25,16 @@ function HoverMask({containerClassName , componentId , portalWrapperClassName}:H
         updatePosition();
     } , [componentId , components]);
 
+    useEffect(() => {
+        const resizeHandler = () => {
+            updatePosition();
+        };
+        window.addEventListener('resize' , resizeHandler);
+        return () => {
+            window.removeEventListener('resize' , resizeHandler);
+        }
+    } , [])
+
     function updatePosition() {
         //如果当前hover的id不存在，不更新
         if(!componentId) return;

@@ -30,6 +30,16 @@ export function SelectedMask({ containerClassName , componentId , portalWrapperC
         updatePosition();
     } , [componentId ,components]);
 
+    useEffect(() => {
+        const resizeHandler = () => {
+            updatePosition();
+        };
+        window.addEventListener('resize' , resizeHandler);
+        return () => {
+            window.removeEventListener('resize' , resizeHandler);
+        }
+    } , [])
+
     //核心更新数据的函数
     function updatePosition(){
         if(!componentId) return;
