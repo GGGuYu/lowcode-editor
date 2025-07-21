@@ -14,12 +14,15 @@ export interface Component {
 //真正zustand存的对象类型
 interface State {
     components:Component[]; //就是第一层,没有根，直接就是第一层组件
+    curComponentId?:number | null;
+    curComponent:Component | null;
 }
 //setter的定义
 interface Action {
     addComponent: (component:Component,parentId?:number) => void;//把谁插入到哪儿
     deleteComponent: (componentId:number) => void;
     updateComponent: (componentId:number , props:any) => void;
+    setCurComponentId:(componentId:number | null) => void;
 }
 
 //上面基本的数据结构有了，真正的实现zustand
@@ -33,6 +36,8 @@ export const useComponentsStore = create<State & Action>(
             desc:'页面',
         }, //初始化
        ] ,
+       curComponentId:null,
+       curComponent:null,
        //给state中的数组加一个组件
        addComponent: (component , parentId) => {
         //调用set可以改    
@@ -85,6 +90,12 @@ export const useComponentsStore = create<State & Action>(
                 //不存在就原封不动还回去
                 return {components:[...state.components]}
             })
+       },
+       setCurComponentId:(componentId) => {
+            set((state) => ({
+                curComponentId:componentId,
+                curComponent:getComponentById(componentId , state.components),
+            }))
        }
     }) 
 );
