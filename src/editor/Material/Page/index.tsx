@@ -12,6 +12,7 @@ function Page({id , children }:PageProps) {
 
     return (
         <div
+        data-component-id={id}
         ref={drop}//标记你可以drop而且是用刚刚创建的drop
         className="p-[20px] h-[100%] box-border"
         style={{ border:canDrop ? '2px solid blue' : 'none' }}//能够drop的元素应该显示蓝色边框

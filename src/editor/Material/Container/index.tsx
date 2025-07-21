@@ -13,6 +13,7 @@ export const Container = ({id ,  children }:ContainerProps) => {
 
     return (
         <div 
+        data-component-id={id} //每一个json最后渲染出来一个实体的组件，实体组件最后这个布局要有一个ID，方便我们找到他
         ref={drop}
         className="min-h-[100px] p-[20px]"
         style={{ border:canDrop ? '2px solid blue' : '1px solid #000' }}

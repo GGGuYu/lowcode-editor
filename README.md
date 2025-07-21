@@ -1,3 +1,53 @@
-# React + TypeScript + Vite
-# zustand + antd + TailWindCss
-# react-dnd拖拽组件 ， Allotment的pane实现窗口大小拖拽
+# React实现低代码编辑器
+---
+### React + TypeScript + Vite + zustand + antd + TailWindCss
+react-dnd拖拽组件 ， Allotment的pane实现窗口大小的拖拽
+
+---
+
+### react19和andv5冲突
+`bash
+npm install @ant-design/v5-patch-for-react-19 --save
+`
+
+`
+import '@ant-design/v5-patch-for-react-19';
+`
+
+---
+
+### hover高光
+通过种一个data-component-id = id来标记所有的材料
+对画布监听鼠标Over,从e的事件冒泡路径取最底层拥有种子的div出来
+把ID保存在一个状态里，从而随时处理最新的hover的组件
+getBoundingClientRect拿到top，left,width,height这些边界属性
+用一个Mask组件，给它高光
+使用createPortal挂载，避免了其他样式的影响，比如overhidden,不会发生裁剪，重渲染的部分也更少
+z-index让高亮组件在上面
+注意还要设置 pointer-event 为 none，不响应鼠标事件。
+优化性能，
+使用 createPortal 是为了：
+主要原因应该是：我们需要把高亮效果的DOM元素插入到画布的特定位置（视觉上覆盖组件），但不想让这个元素受React组件层级关系的约束
+附带好处：
+✅ 不会影响数据流和整个逻辑结构
+✅ 确保高亮效果不会被意外裁剪
+✅ 更可靠的层级管理
+✅ 更精确的位置计算（特别是处理滚动时）
+✅ 更好的性能（减少不必要的重渲染）
+- 物理位置需求
+
+高亮必须覆盖在所有用户组件之上（需要挂载到画布容器）
+
+但高亮组件在逻辑上属于工具栏/画布控制器（不应该影响用户组件树）
+
+- 规避层级污染
+
+用户组件可能有 z-index: 9999 这样的"暴力"设置
+
+Portal 可以确保高亮永远在最顶层（直接挂载到画布根容器）
+
+- 代码组织合理性
+
+高亮的逻辑（计算位置、显示条件）应该属于控制层代码
+
+高亮的渲染需要侵入到画布视图层

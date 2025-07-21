@@ -12,7 +12,7 @@ export function useMaterailDrop(accept:string[] , id:number) {
     const [{ canDrop } , drop] = useDrop(() => ({
         accept:accept,
         drop: (item:{type:string} , monitor) => {
-            if(monitor.didDrop()) return;//在一个最近的drop生效后，其他的不生效了
+            if(monitor.didDrop()) return;//在一个最近的drop生效后，其他的不生效了，确保drop只生效一次
             const props = componentConfig[item.type].defaultProps;
             addComponent({
                 id:new Date().getTime(),
