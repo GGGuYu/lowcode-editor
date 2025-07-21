@@ -18,11 +18,12 @@ function HoverMask({containerClassName , componentId , portalWrapperClassName}:H
         labelTop: 0,
         labelLeft: 0,
     })
-
+    const { components } = useComponentsStore();
     //每次hover的组件改变了，我都要更新mask的核心状态
+     //更新组件树也必须更新所有mask的参数，不然的话，此时componentId没变，不更新，就会出现视觉上的bug
     useEffect(() => {
         updatePosition();
-    } , [componentId]);
+    } , [componentId , components]);
 
     function updatePosition() {
         //如果当前hover的id不存在，不更新
@@ -56,7 +57,7 @@ function HoverMask({containerClassName , componentId , portalWrapperClassName}:H
         });
     }
 
-    const { components } = useComponentsStore();
+    
     //当前的component,可以显示更多的关于Component的信息呗，比如当前hover的是一个button
     const curComponent = useMemo(() => {
         return getComponentById(componentId, components);
@@ -107,7 +108,7 @@ function HoverMask({containerClassName , componentId , portalWrapperClassName}:H
                     whiteSpace: 'nowrap',
                     }}
                 >
-                    {curComponent?.name}
+                    {curComponent?.desc}
                 </div>
             </div>
         </>

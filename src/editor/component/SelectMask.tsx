@@ -28,7 +28,7 @@ export function SelectedMask({ containerClassName , componentId , portalWrapperC
 
     useEffect(() => {
         updatePosition();
-    } , [componentId]);
+    } , [componentId ,components]);
 
     //核心更新数据的函数
     function updatePosition(){
@@ -118,7 +118,7 @@ export function SelectedMask({ containerClassName , componentId , portalWrapperC
                 menu={{
                     items:parentComponents.map(item => ({
                         key:item.id,
-                        label:item.name,
+                        label:item.desc,
                     })),
                     onClick:({key}) => {
                         setCurComponentId(+key);
@@ -137,7 +137,7 @@ export function SelectedMask({ containerClassName , componentId , portalWrapperC
                         whiteSpace: 'nowrap',
                     }}
                     >
-                    {curComponent?.name}
+                    {curComponent?.desc}
                     </div>
                 </Dropdown>
                 {/* 按钮和下拉框 */}

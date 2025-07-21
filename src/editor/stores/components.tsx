@@ -7,6 +7,7 @@ export interface Component {
     id:number;//唯一标识
     name:string;//组件类型名字之类的
     props:any;//组件的一些参数属性吧
+    desc:string;
     children?:Component[];//组件的儿子
     parentId?:number;//组件的父母，方便回去找
 }
