@@ -7,7 +7,7 @@ interface ContainerProps extends CommonComponentProps {
 //写一些可以拖动的材料
 
 
-export const Container = ({id ,  children }:ContainerProps) => {
+export const Container = ({id ,  children ,styles}:ContainerProps) => {
     //使用useDrop让该组件可以接收Drag
     const { canDrop , drop } = useMaterailDrop(['Button','Container'] , id);
 
@@ -16,7 +16,7 @@ export const Container = ({id ,  children }:ContainerProps) => {
         data-component-id={id} //每一个json最后渲染出来一个实体的组件，实体组件最后这个布局要有一个ID，方便我们找到他
         ref={drop}
         className="min-h-[100px] p-[20px]"
-        style={{ border:canDrop ? '2px solid blue' : '1px solid #000' }}
+        style={{...styles, border:canDrop ? '2px solid blue' : '1px solid #000' }}
         >
             {children}
         </div>

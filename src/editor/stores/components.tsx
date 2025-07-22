@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { create  } from "zustand";
 
 //用zustand存json组件信息
@@ -7,6 +8,7 @@ export interface Component {
     id:number;//唯一标识
     name:string;//组件类型名字之类的
     props:any;//组件的一些参数属性吧
+    styles?:CSSProperties;
     desc:string;
     children?:Component[];//组件的儿子
     parentId?:number;//组件的父母，方便回去找
@@ -22,7 +24,8 @@ interface State {
 interface Action {
     addComponent: (component:Component,parentId?:number) => void;//把谁插入到哪儿
     deleteComponent: (componentId:number) => void;
-    updateComponent: (componentId:number , props:any) => void;
+    updateComponentProps: (componentId:number , props:any) => void;
+    updateComponentStyles: (componentId:number , styles:CSSProperties) => void;
     setCurComponentId:(componentId:number | null) => void;
 }
 
@@ -81,7 +84,7 @@ export const useComponentsStore = create<State & Action>(
             }
             
        },
-       updateComponent:(componentId , props) => {
+       updateComponentProps:(componentId , props) => {
             set((state) => {
                 const component = getComponentById(componentId , state.components);
                 if(component){
@@ -91,6 +94,16 @@ export const useComponentsStore = create<State & Action>(
                 //不存在就原封不动还回去
                 return {components:[...state.components]}
             })
+       },
+       updateComponentStyles(componentId, styles) {
+           set((state) => {
+                const component = getComponentById(componentId , state.components);
+                if(component) {
+                    component.styles = {...component.styles , ...styles};
+                    return {components:[...state.components]}
+                }
+                return {components:[...state.components]}
+           })
        },
        setCurComponentId:(componentId) => {
             set((state) => ({

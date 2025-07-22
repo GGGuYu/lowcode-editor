@@ -18,6 +18,9 @@ export function useMaterailDrop(accept:string[] , id:number) {
             addComponent({
                 id:new Date().getTime(),
                 name:item.type,
+                // styles:{
+                //   backgroundColor:'green',  
+                // },
                 desc,
                 props
             } , id);
