@@ -29,8 +29,8 @@ export function SelectedMask({ containerClassName , componentId , portalWrapperC
     useEffect(() => {
         setTimeout(() => {
             updatePosition();
-        } , 200); //加个延迟是为了渲染之后再updatePosition，不然会因为这点时间差，取到错误的边界
-    } , [components]);
+        } , 200)
+    } , [components , componentId]);
 
     useEffect(() => {
         const resizeHandler = () => {

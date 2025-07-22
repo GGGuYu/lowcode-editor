@@ -17,8 +17,11 @@ export function ComponentStyle() {
     useEffect(() => {
         const data = form.getFieldsValue();
         const styles = curComponent?.styles;
+        // console.log('我进来了，我是新的')
         if(styles) {
             form.setFieldsValue({...data , ...styles});
+        }else {
+            form.resetFields();
         }
     } , [curComponent , cssEditorChangeFlag]); //如果自定义css变了，马上更新
 
