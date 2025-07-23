@@ -7,7 +7,7 @@ interface ContainerProps extends CommonComponentProps {
 //写一些可以拖动的材料
 
 
-export const Container = ({id ,  children ,styles}:ContainerProps) => {
+const ContainerDev = ({id ,  children ,styles}:ContainerProps) => {
     //使用useDrop让该组件可以接收Drag
     const { canDrop , drop } = useMaterailDrop(['Button','Container'] , id);
     
@@ -22,3 +22,5 @@ export const Container = ({id ,  children ,styles}:ContainerProps) => {
         </div>
     )
 }
+
+export default ContainerDev;

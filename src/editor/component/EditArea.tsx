@@ -55,11 +55,11 @@ export function EditArea() {
             //先通过每一个json造一个config,然后通过config对象造一个element
             const config = componentConfig?.[component.name] //通过名称取出config
             
-            if(!config?.component) return null; //如果没有注册过，就为空
+            if(!config?.dev) return null; //如果没有注册过，就为空
             
             //利用component类和props属性，然后最后一个参数是children element
             return React.createElement(
-                config.component,
+                config.dev,
                 {
                     key:component.id,
                     id:component.id,

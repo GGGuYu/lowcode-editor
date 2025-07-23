@@ -17,6 +17,7 @@ export interface Component {
 //真正zustand存的对象类型
 interface State {
     components:Component[]; //就是第一层,没有根，直接就是第一层组件
+    mode:'edit' | 'preview';//渲染模式
     curComponentId?:number | null;
     curComponent:Component | null;
 }
@@ -27,6 +28,7 @@ interface Action {
     updateComponentProps: (componentId:number , props:any) => void;
     updateComponentStyles: (componentId:number , styles:CSSProperties) => void;
     setCurComponentId:(componentId:number | null) => void;
+    setMode:(mode:State['mode']) => void;
 }
 
 //上面基本的数据结构有了，真正的实现zustand
@@ -40,6 +42,8 @@ export const useComponentsStore = create<State & Action>(
             desc:'页面',
         }, //初始化
        ] ,
+       mode:'edit',
+       setMode:(mode) => set({mode:mode}),
        curComponentId:null,
        curComponent:null,
        //给state中的数组加一个组件

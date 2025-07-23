@@ -2,9 +2,12 @@
 //还是用zustand来存配置 
 //引入zustand和我的材料
 import { create } from "zustand";
-import { Container } from "../Material/Container";
-import Button from "../Material/Button";
-import Page from "../Material/Page";
+import ContainerDev from '../Material/Container/dev';
+import ContainerProd from '../Material/Container/prod';
+import ButtonDev from '../Material/Button/dev';
+import ButtonProd from '../Material/Button/prod';
+import PageDev from '../Material/Page/dev';
+import PageProd from '../Material/Page/prod';
 
 // 设置器，用户可以通过渲染的设置器设置一些props属性，name是真实属性名，label是name的描述，
 // type是这个表单类型，也就是对应渲染一个什么表单让用户去改,用户可以去改变
@@ -22,7 +25,8 @@ export interface ComponentConfig {
     desc:string;
     setter?:ComponentSetter[];//设置器，渲染选中该组件的时候，右边的属性setting
     stylesSetter?:ComponentSetter[];
-    component:any;//对应一个组件
+    dev:any;
+    prod:any;
 }
 
 
@@ -43,7 +47,8 @@ export const useComponentConfigStore = create<State & Action>((set) => ({
             name:'Container',
             defaultProps:{},
             desc:'容器',
-            component:Container
+            dev:ContainerDev,
+            prod:ContainerProd
         },
         Button:{
             name:'Button',
@@ -81,13 +86,15 @@ export const useComponentConfigStore = create<State & Action>((set) => ({
                 type:'inputNumber',
               },
             ],
-            component:Button
+            dev:ButtonDev,
+            prod:ButtonProd
         },
         Page:{
           name:'Page',
           defaultProps:{},
           desc:'页面',
-          component:Page,
+          dev:PageDev,
+          prod:PageProd
         },
     },
     //定义Action中的方法
