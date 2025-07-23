@@ -18,6 +18,11 @@ export interface ComponentSetter {
     [key:string] :any; 
 }
 
+export interface ComponentEvent {
+    name:string; //时间是什么，代码内部用
+    label:string; //展示给用户看的
+}
+
 //材料都会有一个配置说明，配置说明的类型
 export interface ComponentConfig {
     name:string;
@@ -25,6 +30,7 @@ export interface ComponentConfig {
     desc:string;
     setter?:ComponentSetter[];//设置器，渲染选中该组件的时候，右边的属性setting
     stylesSetter?:ComponentSetter[];
+    events?:ComponentEvent[],
     dev:any;
     prod:any;
 }
@@ -85,6 +91,16 @@ export const useComponentConfigStore = create<State & Action>((set) => ({
                 label:'高度',
                 type:'inputNumber',
               },
+            ],
+            events:[
+                {
+                  name:'onClick',
+                  label:'点击',  
+                },
+                {
+                    name:'onDoubleClick',
+                    label:'双击',
+                },
             ],
             dev:ButtonDev,
             prod:ButtonProd
