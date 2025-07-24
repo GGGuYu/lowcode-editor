@@ -1,25 +1,35 @@
-import { Input } from "antd";
-import type { ComponentEvent } from "../../../stores/component-config";
+import { useState } from "react";
 import { useComponentsStore } from "../../../stores/components";
+import TextArea from "antd/es/input/TextArea";
+
+export interface GoToLinkConfig {
+    type:'goToLink',
+    url:string
+}
+
+export interface GoToLinkProps {
+    defaultValue?:string,
+    onChange?:(config:GoToLinkConfig) => void
+}
 
 
+export function GoToLink(props:GoToLinkProps) {
+    const { defaultValue , onChange } = props;
 
+    const { curComponentId } = useComponentsStore();
+    const [ value , setValue ] = useState(defaultValue);
 
-
-export function GoToLink(props:{ event:ComponentEvent }) {
-    const { event } = props;
-
-    const { curComponentId , curComponent , updateComponentProps} = useComponentsStore();
-
-    function urlChange(eventName:string , value:string) {
+    //表单发生变化，就暴露变化的值和我们的信息出去，让弹窗组件处理，弹窗点击添加，就可以写入json
+    function urlChange(value:string) {
         if(!curComponentId) return;
-        //只是在当前event事件下添加url,其他的event下的不变
-        updateComponentProps(curComponentId , {
-            [eventName]:{
-                ...curComponent?.props?.[eventName],
-                url:value,
-            }
+        
+        setValue(value);
+
+        onChange?.({
+            type:'goToLink',
+            url:value
         })
+        
     }
 
     return (
@@ -27,9 +37,10 @@ export function GoToLink(props:{ event:ComponentEvent }) {
             <div className='flex items-center gap-[10px]'>
                 <span>🔗url：</span>
                 <div>
-                    <Input
-                        onChange={(e) => {urlChange(event.name,e.target.value)}}
-                        value={curComponent?.props?.[event.name]?.url} 
+                    <TextArea
+                        style={{height:200,width:500,border:'1px solid #000'}}
+                        onChange={(e) => { urlChange(e.target.value) }}
+                        value={value || ''} 
                     />
                 </div>
             </div>

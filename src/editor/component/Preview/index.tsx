@@ -2,6 +2,8 @@ import React from "react";
 import { useComponentConfigStore } from "../../stores/component-config";
 import { useComponentsStore, type Component } from "../../stores/components";
 import { message } from "antd";
+import type { GoToLinkConfig } from "../Setting/actions/GoToLink";
+import type { ShowMessageConfig } from "../Setting/actions/showMessage";
 
 //这个比画布简单，因为画布要hover高亮，还要click出编辑框，更新当前选中啥的，这个只需要渲染给用户看效果
 //预览组件，当切换到预览的时候，显示当前用户构建的页面，让用户试用
@@ -12,6 +14,7 @@ export function Preview() {
     const { componentConfig } = useComponentConfigStore();
 
     //添加事件函数，渲染的时候给每个组件都尝试添加一个事件
+    //返回一个数组，全部都是onClick:() => {}这样的，函数键值对，作为参数，传给组件
     function handleEvent(component:Component) {
         const props:Record<string,any> = {};
 
@@ -21,20 +24,19 @@ export function Preview() {
            const eventConfig = component.props[event.name];//尝试拿到当前的实体事件
            //如果当前的实体的事件真的被注册了，就能找到config,不然是空
            if(eventConfig) {
-                const { type } = eventConfig;//事件触发后的动作
-                //整一个在props里面,把事件定义成一个函数塞进去，onClick = () => {}
+                //写一个传给组件的参数onClick会等于这个函数，然后到时候执行这个函数
                 props[event.name] = () => {
-                    if(type === 'goToLink' && eventConfig.url) {
-                        console.log(`发现跳转动作，onClick：() => 跳转到url上：${eventConfig.url}`)
-                        window.location.href = eventConfig.url;
-                    } else if(type === 'showMessage' && eventConfig.config) {
-                        //如果有showMessage会触发什么
-                        if(eventConfig.config?.type === 'success' && eventConfig.config.text){
-                            message.success(eventConfig.config.text);
-                        }else if(eventConfig.config?.type === 'error' && eventConfig.config.text){
-                            message.error(eventConfig.config.text);
+                    eventConfig?.actions?.forEach((action:GoToLinkConfig|ShowMessageConfig) => {
+                        if(action.type === 'goToLink') {
+                            window.location.href = action.url;
+                        }else if (action.type === 'showMessage') {
+                            if(action.config.type === 'success'){
+                                message.success(action.config.text);
+                            }else if (action.config.type === 'error'){
+                                message.error(action.config.text);
+                            }
                         }
-                    }
+                    })
                 }
            }
         });

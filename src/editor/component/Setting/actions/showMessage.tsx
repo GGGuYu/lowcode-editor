@@ -1,44 +1,63 @@
 import { Select } from "antd";
-import type { ComponentEvent } from "../../../stores/component-config";
 import { useComponentsStore } from "../../../stores/components";
 import Input from "antd/es/input/Input";
+import { useState } from "react";
 
+//动作showMessage的json会长这个样子
+export interface ShowMessageConfig {
+    type:'showMessage',
+    config :{
+        type:'success' | 'error',
+        text:string
+    }
+}
+
+export interface ShowMessageProps {
+    value?:ShowMessageConfig['config'];//有两个值初始化，type和text
+    onChange?:(config:ShowMessageConfig) => void;//改变以后回调给父组件
+}
 
 
 //渲染需要填写动作为showMessage的时候的表单组件，提供修改该动作的属性的方式
-export function ShowMessage(props:{ event:ComponentEvent }) {
-    const { event } = props;
+export function ShowMessage(props:ShowMessageProps) {
+    const {
+        value,
+        onChange,
+    } = props;
     
-    const { curComponentId , curComponent , updateComponentProps } = useComponentsStore();
+    const { curComponentId } = useComponentsStore();
+
+    const [type , setType] = useState<'success' | 'error'>(value?.type || 'success');
+    const [text , setText] = useState<string>(value?.text || '');
+
     //在哪一个事件下添加message的type是多少
-    function messageTypeChange(eventName:string , value:string) {
+    function messageTypeChange(value:'success' | 'error') {
         if(!curComponentId) return;
 
-        updateComponentProps(curComponentId , {
-            [eventName]:{
-                ...curComponent?.props?.[eventName],
-                //message这个动作需要一个config,这个函数改type
-                config:{
-                    ...curComponent?.props?.[eventName]?.config,
-                    type:value,
-                }
+        setType(value);
+
+        onChange?.({
+            type:'showMessage',
+            config:{
+                type:value,
+                text
             }
         })
     }
     //在哪一个事件下添加message的Text是多少
-    function messageTextChange(eventName:string , value:string) {
+    function messageTextChange(value:string) {
         if(!curComponentId) return;
 
-        updateComponentProps(curComponentId , {
-            [eventName]:{
-                ...curComponent?.props?.[eventName],
-                //message这个动作需要一个config,这个函数改text
-                config:{
-                    ...curComponent?.props?.[eventName]?.config,
-                    text:value,
-                }
+        setText(value);
+        
+        onChange?.({
+            type:'showMessage',
+            config :{
+                type,
+                text:value
             }
         })
+
     }
 
     return (
@@ -47,13 +66,13 @@ export function ShowMessage(props:{ event:ComponentEvent }) {
                 <div>类型：</div>
                 <div>
                     <Select
-                        style={{ width:160 }}
+                        style={{ width:500 , height:50 }}
                         options={[
                             {label: '成功' , value:'success'},
                             {label: '失败' , value:'error'}
                         ]} 
-                        onChange={(value) => { messageTypeChange(event.name , value) }}
-                        value={curComponent?.props?.[event.name]?.config?.type}
+                        onChange={(value) => { messageTypeChange(value) }}
+                        value={type}
                     />
                 </div>
             </div>
@@ -61,8 +80,9 @@ export function ShowMessage(props:{ event:ComponentEvent }) {
                 <div>文本：</div>
                 <div>
                     <Input 
-                        onChange={(e) => { messageTextChange(event.name , e.target.value) }}
-                        value={curComponent?.props?.[event.name]?.config?.text}
+                        style={{ width:500 , height:50 }}
+                        onChange={(e) => { messageTextChange(e.target.value) }}
+                        value={text}
                     />
                 </div>
             </div>
