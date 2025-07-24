@@ -1,6 +1,7 @@
 import React from "react";
 import { useComponentConfigStore } from "../../stores/component-config";
 import { useComponentsStore, type Component } from "../../stores/components";
+import { message } from "antd";
 
 //这个比画布简单，因为画布要hover高亮，还要click出编辑框，更新当前选中啥的，这个只需要渲染给用户看效果
 //预览组件，当切换到预览的时候，显示当前用户构建的页面，让用户试用
@@ -26,7 +27,14 @@ export function Preview() {
                     if(type === 'goToLink' && eventConfig.url) {
                         console.log(`发现跳转动作，onClick：() => 跳转到url上：${eventConfig.url}`)
                         window.location.href = eventConfig.url;
-                    }   
+                    } else if(type === 'showMessage' && eventConfig.config) {
+                        //如果有showMessage会触发什么
+                        if(eventConfig.config?.type === 'success' && eventConfig.config.text){
+                            message.success(eventConfig.config.text);
+                        }else if(eventConfig.config?.type === 'error' && eventConfig.config.text){
+                            message.error(eventConfig.config.text);
+                        }
+                    }
                 }
            }
         });
