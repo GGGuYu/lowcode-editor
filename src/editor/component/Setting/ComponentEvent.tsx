@@ -6,6 +6,7 @@ import { ActionModal } from './ActionModal';
 import { type GoToLinkConfig } from './actions/GoToLink';
 import type { ShowMessageConfig } from './actions/showMessage';
 import { DeleteOutlined } from '@ant-design/icons'
+import type { CustomJSConfig } from './actions/CustomJS';
 
 //事件编辑页面
 export function ComponentEvent() {
@@ -35,7 +36,7 @@ export function ComponentEvent() {
 
     }
 
-    function handleModalOk(config:GoToLinkConfig|ShowMessageConfig|null){
+    function handleModalOk(config:GoToLinkConfig|ShowMessageConfig|CustomJSConfig|null){
         if(!config || !curEvent || !curComponent || config == null) {
             return;
         }
@@ -71,8 +72,8 @@ export function ComponentEvent() {
             children:(
                 <div>
                     {
-                        (curComponent?.props[event.name]?.actions || []).map((item:GoToLinkConfig|ShowMessageConfig , index:number) => {
-                            return <div>
+                        (curComponent?.props[event.name]?.actions || []).map((item:GoToLinkConfig|ShowMessageConfig|CustomJSConfig , index:number) => {
+                            return <div key={item.type + index}>
                                 {
                                     item.type === 'goToLink' ? <div className='border border-[#aaa] m-[10px] p-[10px] relative'>
                                         <div className='text-[blue]'>跳转链接</div>
@@ -90,8 +91,18 @@ export function ComponentEvent() {
                                         <div>{item.config.text}</div>
                                         {/* 绝对定位的删除按钮 */}
                                         <div style={{ position: 'absolute', top: 10, right: 10, cursor: 'pointer' }}
-                                        onClick={() => deleteAction(event, index)}
-                                    ><DeleteOutlined /></div>
+                                            onClick={() => deleteAction(event, index)}
+                                        ><DeleteOutlined /></div>
+                                    </div> : null
+                                }
+                                {
+                                    item.type === 'customJS' ? <div className='border border-[#aaa] m-[10px] p-[10px] relative'>
+                                        <div className='text-[blue]'>自定义JS</div>
+                                        <div>{item.code}</div>
+                                        {/* 绝对定位的删除按钮 */}
+                                        <div style={{ position:'absolute' , top:10 , right:10, cursor:'pointer' }}
+                                            onClick={() => deleteAction(event , index)}
+                                        ><DeleteOutlined/></div>
                                     </div> : null
                                 }
                             </div>

@@ -5,12 +5,14 @@ import { useState } from "react";
 import { Modal, Segmented } from "antd";
 import { GoToLink, type GoToLinkConfig } from "./actions/GoToLink";
 import { ShowMessage, type ShowMessageConfig } from "./actions/showMessage";
+import { CustomJS,type CustomJSConfig } from "./actions/CustomJS";
+
 
 //弹窗组件，基于Modal，只需要配置就可以了
 //相当于把每个动作的表单显示到一个弹窗上
 interface ActionModalProps {
     visible:boolean;//当前该弹窗是否可见
-    handleOk:(config:GoToLinkConfig | ShowMessageConfig | null) => void;//成功
+    handleOk:(config:GoToLinkConfig | ShowMessageConfig | CustomJSConfig |null) => void;//成功
     handleCancel:() => void;//取消
 }
 
@@ -22,7 +24,7 @@ export function ActionModal(props:ActionModalProps) {
     } = props;
 
     const [ key , setKey ] = useState<string>('访问链接');//默认当前选择的是访问链接的表单
-    const [curConfig , setCurConfig] = useState<GoToLinkConfig | ShowMessageConfig | null>(null);
+    const [curConfig , setCurConfig] = useState<GoToLinkConfig | ShowMessageConfig| CustomJSConfig | null>(null);
 
     return <Modal
         title="事件动作配置"
@@ -42,6 +44,11 @@ export function ActionModal(props:ActionModalProps) {
             }
             {
                 key === '消息提示' && <ShowMessage onChange={(config) => {
+                    setCurConfig(config)
+                }}/>
+            }
+            {
+                key === '自定义JS' && <CustomJS onChange={(config) => {
                     setCurConfig(config)
                 }}/>
             }

@@ -4,6 +4,7 @@ import { useComponentsStore, type Component } from "../../stores/components";
 import { message } from "antd";
 import type { GoToLinkConfig } from "../Setting/actions/GoToLink";
 import type { ShowMessageConfig } from "../Setting/actions/showMessage";
+import type { CustomJSConfig } from "../Setting/actions/CustomJS";
 
 //这个比画布简单，因为画布要hover高亮，还要click出编辑框，更新当前选中啥的，这个只需要渲染给用户看效果
 //预览组件，当切换到预览的时候，显示当前用户构建的页面，让用户试用
@@ -25,8 +26,9 @@ export function Preview() {
            //如果当前的实体的事件真的被注册了，就能找到config,不然是空
            if(eventConfig) {
                 //写一个传给组件的参数onClick会等于这个函数，然后到时候执行这个函数
+                //遍历该事件下的所有动作，执行所有的动作
                 props[event.name] = () => {
-                    eventConfig?.actions?.forEach((action:GoToLinkConfig|ShowMessageConfig) => {
+                    eventConfig?.actions?.forEach((action:GoToLinkConfig|ShowMessageConfig|CustomJSConfig) => {
                         if(action.type === 'goToLink') {
                             window.location.href = action.url;
                         }else if (action.type === 'showMessage') {
@@ -35,6 +37,15 @@ export function Preview() {
                             }else if (action.config.type === 'error'){
                                 message.error(action.config.text);
                             }
+                        }else if(action.type === 'customJS') {
+                            const func = new Function('context',action.code);//最后一个是函数体，前面都是参数名
+                            func({
+                                name:component.name,
+                                props:component.props,
+                                showMessage(content:string) {
+                                    message.success(content);
+                                }
+                            });//触发一下自定义JS,传一些参数给用户的函数体调用
                         }
                     })
                 }
