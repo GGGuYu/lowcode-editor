@@ -1,7 +1,7 @@
 import { Select } from "antd";
 import { useComponentsStore } from "../../../stores/components";
 import Input from "antd/es/input/Input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 //动作showMessage的json会长这个样子
 export interface ShowMessageConfig {
@@ -13,7 +13,8 @@ export interface ShowMessageConfig {
 }
 
 export interface ShowMessageProps {
-    value?:ShowMessageConfig['config'];//有两个值初始化，type和text
+    value?:ShowMessageConfig['config'];
+    defaultValue?:ShowMessageConfig['config'];//有两个值初始化，type和text
     onChange?:(config:ShowMessageConfig) => void;//改变以后回调给父组件
 }
 
@@ -21,14 +22,20 @@ export interface ShowMessageProps {
 //渲染需要填写动作为showMessage的时候的表单组件，提供修改该动作的属性的方式
 export function ShowMessage(props:ShowMessageProps) {
     const {
-        value,
+        value:val,
+        defaultValue,//defaultValue初始化 , value是受控，只要传入的value改变了，我就要更新，而default只有初始化的时候
         onChange,
     } = props;
     
     const { curComponentId } = useComponentsStore();
 
-    const [type , setType] = useState<'success' | 'error'>(value?.type || 'success');
-    const [text , setText] = useState<string>(value?.text || '');
+    const [type , setType] = useState<'success' | 'error'>(defaultValue?.type || 'success');
+    const [text , setText] = useState<string>(defaultValue?.text || '');
+
+    useEffect(() => {
+        setType(val?.type || 'error');
+        setText(val?.text || '');   
+    } , [val])
 
     //在哪一个事件下添加message的type是多少
     function messageTypeChange(value:'success' | 'error') {

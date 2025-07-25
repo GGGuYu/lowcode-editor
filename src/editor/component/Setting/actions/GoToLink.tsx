@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useComponentsStore } from "../../../stores/components";
 import TextArea from "antd/es/input/TextArea";
 
@@ -8,16 +8,23 @@ export interface GoToLinkConfig {
 }
 
 export interface GoToLinkProps {
-    defaultValue?:string,
+    value?:string;
+    defaultValue?:string;
     onChange?:(config:GoToLinkConfig) => void
 }
 
 
 export function GoToLink(props:GoToLinkProps) {
-    const { defaultValue , onChange } = props;
+    const { value:val, defaultValue , onChange } = props;
 
     const { curComponentId } = useComponentsStore();
     const [ value , setValue ] = useState(defaultValue);
+
+    useEffect(() => {
+        if(val) {
+            setValue(val);
+        }else setValue('')
+    } , [val])
 
     //表单发生变化，就暴露变化的值和我们的信息出去，让弹窗组件处理，弹窗点击添加，就可以写入json
     function urlChange(value:string) {

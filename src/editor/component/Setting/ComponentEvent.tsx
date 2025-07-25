@@ -5,8 +5,10 @@ import { useState } from 'react';
 import { ActionModal } from './ActionModal';
 import { type GoToLinkConfig } from './actions/GoToLink';
 import type { ShowMessageConfig } from './actions/showMessage';
-import { DeleteOutlined } from '@ant-design/icons'
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons'
 import type { CustomJSConfig } from './actions/CustomJS';
+
+export type ActionConfig = GoToLinkConfig | ShowMessageConfig | CustomJSConfig | null
 
 //事件编辑页面
 export function ComponentEvent() {
@@ -15,9 +17,18 @@ export function ComponentEvent() {
     const { componentConfig } = useComponentConfigStore();
     const [ actionModalOpen , setActionModalOpen ] = useState<boolean>(false);
     const [ curEvent , setCurEvent ] = useState<ComponentEvent>(); //方便给事件配置弹窗传递当前是哪个事件
-    
+    const [curAction  , setCurAction] = useState<ActionConfig>();
+    const [curActionIndex  , setCurActionIndex] = useState<number>();
 
     if(!curComponent) return null;
+
+    //原内容，修改到哪个index元素
+    function editAction(config:ActionConfig , index:number){
+        if(!curComponent) return;
+        setCurActionIndex(index);
+        setCurAction(config);//设置弹窗要显示的config,方便传给弹窗
+        setActionModalOpen(true);
+    }
 
     //从哪个事件去删除他的第几个action
     function deleteAction(event:ComponentEvent , index:number){
@@ -36,21 +47,36 @@ export function ComponentEvent() {
 
     }
 
-    function handleModalOk(config:GoToLinkConfig|ShowMessageConfig|CustomJSConfig|null){
+    function handleModalOk(config:ActionConfig){
         if(!config || !curEvent || !curComponent || config == null) {
             return;
         }
 
         if(!curComponentId) return;
-        
-        updateComponentProps(curComponentId , {
-            [curEvent.name]:{
-                actions:[
-                    ...(curComponent.props[curEvent.name]?.actions || []),
-                    config
-                ]
-            }
-        })
+
+        //判断是修改还是新增
+        if(curAction){
+            updateComponentProps(curComponentId , {
+                [curEvent.name]:{
+                    actions:curComponent.props[curEvent.name].actions.map((item:ActionConfig , index:number) => {
+                        return index === curActionIndex ? config : item
+                    })
+                }
+            })
+        } else {
+            //新增
+            updateComponentProps(curComponentId , {
+                [curEvent.name]:{
+                    actions:[
+                        ...(curComponent.props[curEvent.name]?.actions || []),
+                        config
+                    ]
+                }
+            })
+        }
+        //下次进入弹窗应该不是修改，除非点击修改
+        setCurAction(undefined);//之后就是新增了
+
         setActionModalOpen(false);
     }
     
@@ -78,6 +104,10 @@ export function ComponentEvent() {
                                     item.type === 'goToLink' ? <div className='border border-[#aaa] m-[10px] p-[10px] relative'>
                                         <div className='text-[blue]'>跳转链接</div>
                                         <div>{item.url}</div>
+                                        {/* 绝对定位的修改按钮 */}
+                                        <div style={{position:'absolute' , top:10 , right:30 , cursor:'pointer'}}
+                                            onClick={() => editAction(item , index)} //点击修改主要是要弹出来窗口,显示这个动作的属性，方便修改
+                                        ><EditOutlined/></div>
                                         {/* 绝对定位的删除按钮 */}
                                         <div style={{ position: 'absolute', top: 10, right: 10, cursor: 'pointer' }}
                                         onClick={() => deleteAction(event, index)}
@@ -89,6 +119,10 @@ export function ComponentEvent() {
                                         <div className='text-[blue]'>消息弹窗</div>
                                         <div>{item.config.type}</div>
                                         <div>{item.config.text}</div>
+                                        {/* 绝对定位的修改按钮 */}
+                                        <div style={{position:'absolute' , top:10 , right:30 , cursor:'pointer'}}
+                                            onClick={() => editAction(item , index)} //点击修改主要是要弹出来窗口,显示这个动作的属性，方便修改
+                                        ><EditOutlined/></div>
                                         {/* 绝对定位的删除按钮 */}
                                         <div style={{ position: 'absolute', top: 10, right: 10, cursor: 'pointer' }}
                                             onClick={() => deleteAction(event, index)}
@@ -99,6 +133,10 @@ export function ComponentEvent() {
                                     item.type === 'customJS' ? <div className='border border-[#aaa] m-[10px] p-[10px] relative'>
                                         <div className='text-[blue]'>自定义JS</div>
                                         <div>{item.code}</div>
+                                        {/* 绝对定位的修改按钮 */}
+                                        <div style={{position:'absolute' , top:10 , right:30 , cursor:'pointer'}}
+                                            onClick={() => editAction(item)} //点击修改主要是要弹出来窗口,显示这个动作的属性，方便修改
+                                        ><EditOutlined/></div>
                                         {/* 绝对定位的删除按钮 */}
                                         <div style={{ position:'absolute' , top:10 , right:10, cursor:'pointer' }}
                                             onClick={() => deleteAction(event , index)}
@@ -119,9 +157,10 @@ export function ComponentEvent() {
         <Collapse className='mb-[10px]' items={items} defaultActiveKey={componentConfig[curComponent.name].events?.map(item =>item.name)}
 />
         {/* 弹窗，点击事件的添加动作，显示,平常不显示 */}
-        <ActionModal visible={actionModalOpen} handleOk={handleModalOk}
+        <ActionModal visible={actionModalOpen} handleOk={handleModalOk} action={curAction}
             handleCancel={() => {
-            setActionModalOpen(false)
+                setCurAction(undefined);//下次进入弹窗应该不是修改，除非点击修改
+                setActionModalOpen(false)
         }}/>
     </div>
 }
