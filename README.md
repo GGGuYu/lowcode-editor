@@ -108,4 +108,24 @@ onClick：() => {} , 这样的话呢，就可以把onClick：()=>{} 这样一个
 ### 自定义JS
 也是事件触发时候的动作，
 实现增删改查执行，增加进json ， 要提供修改，因为代码比较长相比于其他动作的参数
+修改主要是检测当前有没有一个要修改的动作的配置actionConfig,如果要改这个配置，就显示它，并且添加变成修改，如果不存在这个action，那就说明是添加，添加的话就设置为空弹窗，只要维护当前是否有一个要修改的action就好了
 查就是显示嘛，然后是执行，执行的话用new Function
+
+### 组件联动
+我们知道，forwardRef + useImperativeHandle 可以让组件暴露一些方法出来
+我们在递归渲染组件 renderComponents 的时候，把组件 ref 收集起来，放到一个 map 里
+这样 id 为 111 的组件想调用 id 为 222 的组件的 ccc 方法，就只需要在动作里加一个配置
+```ts
+actions: [
+    {
+        type: 'componentMethod',
+        config: {
+            componentId: 222,
+            method: 'ccc'
+        }
+    }
+]
+```
+然后处理事件的时候，根据这个 componentId 和 method 从 refs 里拿到对应的方法执行就好了
+注意
+dev 时的组件和 prod 时的组件不一样，我们要加上 drop 的处理，，设置 drop 时的高亮，添加 data-compnent-id，并且指定最小高度，不用触发事件，也不需要暴露API

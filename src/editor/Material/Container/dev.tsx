@@ -9,7 +9,7 @@ interface ContainerProps extends CommonComponentProps {
 
 const ContainerDev = ({id ,  children ,styles}:ContainerProps) => {
     //使用useDrop让该组件可以接收Drag
-    const { canDrop , drop } = useMaterailDrop(['Button','Container'] , id);
+    const { canDrop , drop } = useMaterailDrop(['Button','Container','Modal'] , id);
     
     return (
         <div 

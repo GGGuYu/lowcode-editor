@@ -8,6 +8,8 @@ import ButtonDev from '../Material/Button/dev';
 import ButtonProd from '../Material/Button/prod';
 import PageDev from '../Material/Page/dev';
 import PageProd from '../Material/Page/prod';
+import ModalDev from "../Material/Modal/dev";
+import ModalProd from "../Material/Modal/prod";
 
 // 设置器，用户可以通过渲染的设置器设置一些props属性，name是真实属性名，label是name的描述，
 // type是这个表单类型，也就是对应渲染一个什么表单让用户去改,用户可以去改变
@@ -104,6 +106,33 @@ export const useComponentConfigStore = create<State & Action>((set) => ({
             ],
             dev:ButtonDev,
             prod:ButtonProd
+        },
+        Modal:{
+            name:'Modal',
+            defaultProps:{
+                title:'弹窗',
+            },
+            setter:[
+                {
+                    name:'title',
+                    label:'标题',
+                    type:'input'
+                }
+            ],
+            stylesSetter:[],
+            events:[
+                {
+                    name:'onOk',
+                    label:'确认事件',
+                },
+                {
+                    name:'onCancel',
+                    label:'取消事件'
+                }
+            ],
+            desc:'弹窗',
+            dev:ModalDev,
+            prod:ModalProd
         },
         Page:{
           name:'Page',

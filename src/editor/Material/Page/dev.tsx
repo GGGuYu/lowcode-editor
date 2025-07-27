@@ -8,7 +8,7 @@ interface PageProps extends CommonComponentProps {
 function PageDev({id , children , styles}:PageProps) {
     
     //拖拽的组件，我会放到Page上
-    const { canDrop , drop } = useMaterailDrop(['Button' , 'Container'] , id);
+    const { canDrop , drop } = useMaterailDrop(['Button' , 'Container','Modal'] , id);
 
     return (
         <div
