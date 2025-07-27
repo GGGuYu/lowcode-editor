@@ -10,7 +10,9 @@ export function MaterialItem({ name , desc } : MaterialItemProps) {
     const [_ , drag] = useDrag({
         type:name,
         item:{
-            type:name
+            type:name,
+            dragType:'add',
+            id:-1
         }
     });
 
