@@ -112,6 +112,7 @@ onClick：() => {} , 这样的话呢，就可以把onClick：()=>{} 这样一个
 查就是显示嘛，然后是执行，执行的话用new Function
 
 ### 组件联动
+当你点击一个按钮的时候，我们可以修改另一个组件的，比如说让他隐藏
 我们知道，forwardRef + useImperativeHandle 可以让组件暴露一些方法出来
 我们在递归渲染组件 renderComponents 的时候，把组件 ref 收集起来，放到一个 map 里
 这样 id 为 111 的组件想调用 id 为 222 的组件的 ccc 方法，就只需要在动作里加一个配置
@@ -129,3 +130,5 @@ actions: [
 然后处理事件的时候，根据这个 componentId 和 method 从 refs 里拿到对应的方法执行就好了
 注意
 dev 时的组件和 prod 时的组件不一样，我们要加上 drop 的处理，，设置 drop 时的高亮，添加 data-compnent-id，并且指定最小高度，不用触发事件，也不需要暴露API
+关键,每个组件暴露出来的API要收集起来，大家暴露的都是Record<string , any>格式：
+`ref:(ref:Record<string , any>) => { componentRefs.current[component.id] = ref; }`

@@ -7,8 +7,9 @@ import { type GoToLinkConfig } from './actions/GoToLink';
 import type { ShowMessageConfig } from './actions/showMessage';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons'
 import type { CustomJSConfig } from './actions/CustomJS';
+import type { ComponentMethodConfig } from './actions/ComponentMethod';
 
-export type ActionConfig = GoToLinkConfig | ShowMessageConfig | CustomJSConfig | null
+export type ActionConfig = GoToLinkConfig | ShowMessageConfig | CustomJSConfig | ComponentMethodConfig | null
 
 //事件编辑页面
 export function ComponentEvent() {
@@ -23,9 +24,11 @@ export function ComponentEvent() {
     if(!curComponent) return null;
 
     //原内容，修改到哪个index元素
-    function editAction(config:ActionConfig , index:number){
+    function editAction(event:ComponentEvent ,config:ActionConfig , index:number){
         if(!curComponent) return;
+        setCurEvent(event);
         setCurActionIndex(index);
+        // console.log(config);
         setCurAction(config);//设置弹窗要显示的config,方便传给弹窗
         setActionModalOpen(true);
     }
@@ -56,6 +59,7 @@ export function ComponentEvent() {
 
         //判断是修改还是新增
         if(curAction){
+            // console.log(curEvent.name);
             updateComponentProps(curComponentId , {
                 [curEvent.name]:{
                     actions:curComponent.props[curEvent.name].actions.map((item:ActionConfig , index:number) => {
@@ -89,6 +93,7 @@ export function ComponentEvent() {
                 <span>{event.label}</span>
                 <Button type='primary' onClick={(e) => {
                     e.stopPropagation();//阻止事件冒泡到可以触发展开关闭的div,这样就只能触发button的功能
+                    setCurAction(undefined);
                     setCurEvent(event);
                     setActionModalOpen(true);
                 }}>
@@ -98,7 +103,7 @@ export function ComponentEvent() {
             children:(
                 <div>
                     {
-                        (curComponent?.props[event.name]?.actions || []).map((item:GoToLinkConfig|ShowMessageConfig|CustomJSConfig , index:number) => {
+                        (curComponent?.props[event.name]?.actions || []).map((item:GoToLinkConfig|ShowMessageConfig|CustomJSConfig|ComponentMethodConfig , index:number) => {
                             return <div key={item.type + index}>
                                 {
                                     item.type === 'goToLink' ? <div className='border border-[#aaa] m-[10px] p-[10px] relative'>
@@ -106,7 +111,7 @@ export function ComponentEvent() {
                                         <div>{item.url}</div>
                                         {/* 绝对定位的修改按钮 */}
                                         <div style={{position:'absolute' , top:10 , right:30 , cursor:'pointer'}}
-                                            onClick={() => editAction(item , index)} //点击修改主要是要弹出来窗口,显示这个动作的属性，方便修改
+                                            onClick={() => editAction(event , item , index)} //点击修改主要是要弹出来窗口,显示这个动作的属性，方便修改
                                         ><EditOutlined/></div>
                                         {/* 绝对定位的删除按钮 */}
                                         <div style={{ position: 'absolute', top: 10, right: 10, cursor: 'pointer' }}
@@ -121,7 +126,22 @@ export function ComponentEvent() {
                                         <div>{item.config.text}</div>
                                         {/* 绝对定位的修改按钮 */}
                                         <div style={{position:'absolute' , top:10 , right:30 , cursor:'pointer'}}
-                                            onClick={() => editAction(item , index)} //点击修改主要是要弹出来窗口,显示这个动作的属性，方便修改
+                                            onClick={() => editAction(event ,item , index)} //点击修改主要是要弹出来窗口,显示这个动作的属性，方便修改
+                                        ><EditOutlined/></div>
+                                        {/* 绝对定位的删除按钮 */}
+                                        <div style={{ position: 'absolute', top: 10, right: 10, cursor: 'pointer' }}
+                                            onClick={() => deleteAction(event, index)}
+                                        ><DeleteOutlined /></div>
+                                    </div> : null
+                                }
+                                {
+                                    item.type === 'componentMethod' ? <div className='border border-[#aaa] m-[10px] p-[10px] relative'>
+                                        <div className='text-[blue]'>组件方法</div>
+                                        <div>{item.config.componentId}</div>
+                                        <div>{item.config.method}</div>
+                                        {/* 绝对定位的修改按钮 */}
+                                        <div style={{position:'absolute' , top:10 , right:30 , cursor:'pointer'}}
+                                            onClick={() => editAction(event , item , index)} //点击修改主要是要弹出来窗口,显示这个动作的属性，方便修改
                                         ><EditOutlined/></div>
                                         {/* 绝对定位的删除按钮 */}
                                         <div style={{ position: 'absolute', top: 10, right: 10, cursor: 'pointer' }}
@@ -135,7 +155,7 @@ export function ComponentEvent() {
                                         <div>{item.code}</div>
                                         {/* 绝对定位的修改按钮 */}
                                         <div style={{position:'absolute' , top:10 , right:30 , cursor:'pointer'}}
-                                            onClick={() => editAction(item)} //点击修改主要是要弹出来窗口,显示这个动作的属性，方便修改
+                                            onClick={() => editAction(item , index)} //点击修改主要是要弹出来窗口,显示这个动作的属性，方便修改
                                         ><EditOutlined/></div>
                                         {/* 绝对定位的删除按钮 */}
                                         <div style={{ position:'absolute' , top:10 , right:10, cursor:'pointer' }}

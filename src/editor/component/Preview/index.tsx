@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useComponentConfigStore } from "../../stores/component-config";
 import { useComponentsStore, type Component } from "../../stores/components";
 import { message } from "antd";
 import type { GoToLinkConfig } from "../Setting/actions/GoToLink";
 import type { ShowMessageConfig } from "../Setting/actions/showMessage";
 import type { CustomJSConfig } from "../Setting/actions/CustomJS";
+import type { ComponentMethodConfig } from "../Setting/actions/ComponentMethod";
 
 //这个比画布简单，因为画布要hover高亮，还要click出编辑框，更新当前选中啥的，这个只需要渲染给用户看效果
 //预览组件，当切换到预览的时候，显示当前用户构建的页面，让用户试用
@@ -13,6 +14,10 @@ export function Preview() {
     const { components } = useComponentsStore();
     //配置类，才能知道要渲染哪个具体的组件，渲染prod而不是dev
     const { componentConfig } = useComponentConfigStore();
+    
+    // 保存各个组件实体暴露出来的方法引用ref的MAP
+    const componentRefs = useRef<Record<string , any>>({});
+
 
     //添加事件函数，渲染的时候给每个组件都尝试添加一个事件
     //返回一个数组，全部都是onClick:() => {}这样的，函数键值对，作为参数，传给组件
@@ -28,7 +33,7 @@ export function Preview() {
                 //写一个传给组件的参数onClick会等于这个函数，然后到时候执行这个函数
                 //遍历该事件下的所有动作，执行所有的动作
                 props[event.name] = () => {
-                    eventConfig?.actions?.forEach((action:GoToLinkConfig|ShowMessageConfig|CustomJSConfig) => {
+                    eventConfig?.actions?.forEach((action:GoToLinkConfig|ShowMessageConfig|CustomJSConfig|ComponentMethodConfig) => {
                         if(action.type === 'goToLink') {
                             window.location.href = action.url;
                         }else if (action.type === 'showMessage') {
@@ -46,6 +51,12 @@ export function Preview() {
                                     message.success(content);
                                 }
                             });//触发一下自定义JS,传一些参数给用户的函数体调用
+                        } else if(action.type === 'componentMethod') {
+                            const componentRef = componentRefs.current[action.config.componentId];
+
+                            if(componentRef){
+                                componentRef[action.config.method]?.();
+                            }
                         }
                     })
                 }
@@ -71,6 +82,7 @@ export function Preview() {
                     id:component.id,
                     name:component.name,
                     styles:component.styles,
+                    ref:(ref:Record<string , any>) => {componentRefs.current[component.id] = ref; },
                     ...config.defaultProps, //默认的属性
                     ...component.props, //用户选的属性
                     //把函数通过参数的方式传递给组件，预览组件只要处理好自己config定义的函数就行了

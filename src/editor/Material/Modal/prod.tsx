@@ -20,7 +20,7 @@ export interface ModalProdProps extends CommonComponentProps{
 //申明该组件会暴露Ref出来，ref的类型和普通参数的类型
 //这是一个可以drop可以控制API的弹窗物料，这是他的prod也就是预览的时候真实渲染的
 const ModalProd = forwardRef<ModalRef , ModalProdProps>(({ children ,title ,onOk , onCancel, styles} , ref) => {
-    const [open , setOpen] = useState<boolean>(true);
+    const [open , setOpen] = useState<boolean>(false);
     
     //自定义暴露的ref
     useImperativeHandle(ref , () => {

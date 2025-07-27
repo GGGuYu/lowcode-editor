@@ -7,6 +7,7 @@ import { GoToLink, type GoToLinkConfig } from "./actions/GoToLink";
 import { ShowMessage, type ShowMessageConfig } from "./actions/showMessage";
 import { CustomJS,type CustomJSConfig } from "./actions/CustomJS";
 import type { ActionConfig } from "./ComponentEvent";
+import { ComponentMethod, type ComponentMethodConfig } from "./actions/ComponentMethod";
 
 
 //弹窗组件，基于Modal，只需要配置就可以了
@@ -30,11 +31,12 @@ export function ActionModal(props:ActionModalProps) {
     const map = {
         goToLink:'访问链接',
         showMessage:'消息提示',
-        customJS:'自定义JS'
+        componentMethod:'组件方法',
+        customJS:'自定义JS',
     }
 
     const [ key , setKey ] = useState<string>('访问链接');//默认当前选择的是访问链接的表单
-    const [curConfig , setCurConfig] = useState<GoToLinkConfig | ShowMessageConfig| CustomJSConfig | null>(null);
+    const [curConfig , setCurConfig] = useState<GoToLinkConfig | ShowMessageConfig| CustomJSConfig | ComponentMethodConfig | null>(null);
 
     //如果传入的有action,就根据action初始化
     useEffect(() => {
@@ -53,7 +55,7 @@ export function ActionModal(props:ActionModalProps) {
         onCancel={handleCancel}
     >
         <div className="h-[500px]">
-            <Segmented value={key} onChange={setKey} block options={['访问链接' , '消息提示' ,'自定义JS']}/>
+            <Segmented value={key} onChange={setKey} block options={['访问链接' , '消息提示' ,'自定义JS','组件方法']}/>
             {
                 // value这个值只要改变就会渲染，所以用value，如果用defaultvalue,那么就不会回显，只能最一开始初始化
                 key === '访问链接' && <GoToLink value={action?.type === 'goToLink' ? action.url : ''} onChange={(config) => {
@@ -64,6 +66,11 @@ export function ActionModal(props:ActionModalProps) {
                 key === '消息提示' && <ShowMessage value={action?.type === 'showMessage' ? action.config : undefined} onChange={(config) => {
                     setCurConfig(config)
                 }}/>
+            }
+            {
+                key === '组件方法' && <ComponentMethod value={action?.type === 'componentMethod' ? action.config : undefined} onChange={(config) => {
+                    setCurConfig(config)
+                }} />
             }
             {
                 key === '自定义JS' && <CustomJS value={action?.type==='customJS' ? action.code : ''} onChange={(config) => {

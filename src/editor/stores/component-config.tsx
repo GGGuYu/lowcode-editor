@@ -20,9 +20,16 @@ export interface ComponentSetter {
     [key:string] :any; 
 }
 
+//事件渲染哪些collapse
 export interface ComponentEvent {
-    name:string; //时间是什么，代码内部用
+    name:string; //事件是什么，代码内部用
     label:string; //展示给用户看的
+}
+
+// 组件本身可以暴露什么方法
+export interface ComponentMethod {
+    name:string;
+    label:string;
 }
 
 //材料都会有一个配置说明，配置说明的类型
@@ -33,6 +40,7 @@ export interface ComponentConfig {
     setter?:ComponentSetter[];//设置器，渲染选中该组件的时候，右边的属性setting
     stylesSetter?:ComponentSetter[];
     events?:ComponentEvent[],
+    methods?:ComponentMethod[],
     dev:any;
     prod:any;
 }
@@ -128,6 +136,16 @@ export const useComponentConfigStore = create<State & Action>((set) => ({
                 {
                     name:'onCancel',
                     label:'取消事件'
+                }
+            ],
+            methods:[
+                {
+                    name:'open',
+                    label:'打开弹窗'
+                },
+                {
+                    name:'close',
+                    label:'关闭弹窗'
                 }
             ],
             desc:'弹窗',
