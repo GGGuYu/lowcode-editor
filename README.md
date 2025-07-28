@@ -139,3 +139,6 @@ dev 时的组件和 prod 时的组件不一样，我们要加上 drop 的处理�
 还要注意有些组件，比如container,又可以drop又可以drag,要把ref提前暴露出来，用effct来初始化
 
 ### Table组件
+col只是要取createelement的时候的属性，因此什么都不用写，我们利用属性，创造出columns数组，就可以渲染列名了
+数据用异步初始化的方法，用axios来请求
+日期用dayjs处理
