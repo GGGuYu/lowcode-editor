@@ -1,4 +1,3 @@
-import React from "react";
 import type { CommonComponentProps } from "../types";
 import { forwardRef, useImperativeHandle, useState } from "react";
 import { Modal as AntdModal } from 'antd';

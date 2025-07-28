@@ -2,7 +2,7 @@ import { type CommonComponentProps } from "../types";
 
 
 //不用带 border，也不用处理 drop 事件。
-const ContainerProd = ({ id, children, styles }: CommonComponentProps) => {
+const ContainerProd = ({ children, styles }: CommonComponentProps) => {
 
     return (
         <div 

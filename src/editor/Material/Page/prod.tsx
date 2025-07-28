@@ -1,7 +1,7 @@
 import { type CommonComponentProps } from "../types";
 
 //pord不用带 h-[100%] 了，这个只是编辑的时候需要,也不需要处理dorp
-function PageProd({ id, name, children, styles }: CommonComponentProps) {
+function PageProd({ children, styles }: CommonComponentProps) {
 
     return (
         <div

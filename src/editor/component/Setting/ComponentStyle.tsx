@@ -1,6 +1,6 @@
 import { Form, Input, InputNumber, Select } from "antd"
 import { useComponentsStore, type Component } from "../../stores/components";
-import { useComponentConfigStore, type ComponentConfig, type ComponentSetter } from "../../stores/component-config";
+import { useComponentConfigStore, type ComponentSetter } from "../../stores/component-config";
 import { useEffect, useState, type CSSProperties } from "react";
 import CssEditor from "./CssEditor";
 

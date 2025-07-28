@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { useDrag } from "react-dnd";
 
 interface MaterialItemProps {
@@ -6,6 +7,8 @@ interface MaterialItemProps {
 }
 
 export function MaterialItem({ name , desc } : MaterialItemProps) {
+
+    const divRef = useRef<HTMLDivElement>(null);
 
     const [_ , drag] = useDrag({
         type:name,
@@ -16,8 +19,12 @@ export function MaterialItem({ name , desc } : MaterialItemProps) {
         }
     });
 
+    useEffect(() => {
+        drag(divRef);
+    } , [])
+
     return <div
-            ref={drag} 
+            ref={divRef} 
             className='
             border-dashed
             border-[1px]
