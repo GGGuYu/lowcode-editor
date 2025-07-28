@@ -155,7 +155,7 @@ export function ComponentEvent() {
                                         <div>{item.code}</div>
                                         {/* 绝对定位的修改按钮 */}
                                         <div style={{position:'absolute' , top:10 , right:30 , cursor:'pointer'}}
-                                            onClick={() => editAction(item , index)} //点击修改主要是要弹出来窗口,显示这个动作的属性，方便修改
+                                            onClick={() => editAction(event , item ,index)} //点击修改主要是要弹出来窗口,显示这个动作的属性，方便修改
                                         ><EditOutlined/></div>
                                         {/* 绝对定位的删除按钮 */}
                                         <div style={{ position:'absolute' , top:10 , right:10, cursor:'pointer' }}
