@@ -14,7 +14,7 @@ export interface ModalDevProps extends CommonComponentProps{
 function ModalDev({id , children , title , styles}:ModalDevProps){
     const divRef = useRef<HTMLDivElement>(null);
     //让这个dev的组件渲染出来可以处理drop函数
-    const {canDrop , drop} = useMaterailDrop(['Button' , 'Container'] , id); //不能在弹窗再放弹窗
+    const {canDrop , drop} = useMaterailDrop(['Button' , 'Container','Table'] , id); //不能在弹窗再放弹窗
     
     const [ _ , drag ] = useDrag({
         type:'Modal',

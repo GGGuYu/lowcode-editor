@@ -13,7 +13,7 @@ const ContainerDev = ({id ,  children ,styles}:ContainerProps) => {
     const divRef = useRef<HTMLDivElement>(null);
 
     //使用useDrop让该组件可以接收Drag
-    const { canDrop , drop } = useMaterailDrop(['Button','Container','Modal'] , id);
+    const { canDrop , drop } = useMaterailDrop(['Button','Container','Modal','Table'] , id);
     
     const [_ , drag] = useDrag({
         type:'Container',

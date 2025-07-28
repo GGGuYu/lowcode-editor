@@ -1,4 +1,4 @@
-import { PropsWithChildren, type CSSProperties } from "react";
+import {type PropsWithChildren, type CSSProperties } from "react";
 
 export interface CommonComponentProps extends PropsWithChildren{
     id: number;

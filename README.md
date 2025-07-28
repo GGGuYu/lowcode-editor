@@ -132,3 +132,10 @@ actions: [
 dev 时的组件和 prod 时的组件不一样，我们要加上 drop 的处理，，设置 drop 时的高亮，添加 data-compnent-id，并且指定最小高度，不用触发事件，也不需要暴露API
 关键,每个组件暴露出来的API要收集起来，大家暴露的都是Record<string , any>格式：
 `ref:(ref:Record<string , any>) => { componentRefs.current[component.id] = ref; }`
+
+### 拖拽优化
+拖拽的一部分，主要是编辑区渲染出来的组件也可以拖拽，也就是dev组件加一个拖拽
+注意这里拖拽里面的dev组件，应该是move而不是新增
+还要注意有些组件，比如container,又可以drop又可以drag,要把ref提前暴露出来，用effct来初始化
+
+### Table组件

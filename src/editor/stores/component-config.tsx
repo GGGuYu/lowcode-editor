@@ -10,6 +10,10 @@ import PageDev from '../Material/Page/dev';
 import PageProd from '../Material/Page/prod';
 import ModalDev from "../Material/Modal/dev";
 import ModalProd from "../Material/Modal/prod";
+import TableDev from "../Material/Table/dev";
+import TableColumDev from "../Material/TableColumn/dev";
+import TableColumProd from "../Material/TableColumn/prod";
+import TableProd from "../Material/Table/prod";
 
 // 设置器，用户可以通过渲染的设置器设置一些props属性，name是真实属性名，label是name的描述，
 // type是这个表单类型，也就是对应渲染一个什么表单让用户去改,用户可以去改变
@@ -151,6 +155,57 @@ export const useComponentConfigStore = create<State & Action>((set) => ({
             desc:'弹窗',
             dev:ModalDev,
             prod:ModalProd
+        },
+        Table:{
+            name:'Table',
+            defaultProps:{},
+            desc:'表格',
+            setter:[
+                {
+                    name:'url',
+                    label:'url',
+                    type:'input'
+                }
+            ],
+            dev:TableDev,
+            prod:TableProd
+        },
+        TableColumn: {
+          name:'TableColumn',
+          desc:'表格列',
+          defaultProps:{
+            dataIndex:`col_${new Date().getTime()}`,
+            title:'列名'
+          },
+          setter:[
+                {
+                    name:'type',
+                    label:'类型',
+                    type:'select',
+                    options:[
+                        {
+                            label:'文本',
+                            value:'text',
+                        },
+                        {
+                            label:'日期',
+                            value:'date',
+                        }
+                    ],
+                },
+                {
+                    name:'title',
+                    label:'标题',
+                    type:'input'
+                },
+                {
+                    name:'dataIndex',
+                    label:'字段',
+                    type:'input'
+                }
+            ],
+            dev:TableColumDev,
+            prod:TableColumProd
         },
         Page:{
           name:'Page',
